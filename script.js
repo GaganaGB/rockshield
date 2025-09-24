@@ -191,13 +191,13 @@ function setUIStateLoading(isLoading) {
 }
 
 function renderResult(result) {
-  const { danger, direction, confidence, slope_angle } = result;
+  const { danger, direction, confidence, slope_angle, class_name, class_prob } = result;
   details.classList.remove('hidden');
   details.innerHTML = `
     <div><strong>Slope Angle:</strong> ${typeof slope_angle === 'number' ? `${slope_angle}°` : 'N/A'}</div>
     <div><strong>Risk:</strong> ${danger ? 'Danger' : 'Safe'}</div>
     <div><strong>Direction:</strong> ${direction || 'N/A'}</div>
-    <div><strong>Confidence:</strong> ${(confidence * 100).toFixed(1)}%</div>
+    ${class_name ? `<div><strong>Category:</strong> ${class_name} (${(class_prob*100||0).toFixed(1)}%)</div>` : ''}
   `;
 
   alertBanner.classList.remove('hidden');
