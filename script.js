@@ -96,7 +96,14 @@ async function pingApi() {
 }
 
 analyzeBtn.addEventListener('click', async () => {
-  if (!selectedFile) return;
+  // Fallback: read directly from input if state missing
+  if (!selectedFile && imageInput && imageInput.files && imageInput.files[0]) {
+    selectedFile = imageInput.files[0];
+  }
+  if (!selectedFile) {
+    statusEl.textContent = 'Please choose an image first.';
+    return;
+  }
   try {
     setUIStateLoading(true);
     const form = new FormData();
@@ -188,11 +195,11 @@ if (forceBtn) {
 // API config UI removed
 
 function setUIStateLoading(isLoading) {
-  analyzeBtn.disabled = isLoading;
+  if (analyzeBtn) analyzeBtn.disabled = isLoading;
   statusEl.textContent = isLoading ? 'Analyzing…' : '';
 }
 
-function renderResult(result) {
+async function renderResult(result) {
   const { danger, direction, confidence, slope_angle, class_name, class_prob } = result;
   details.classList.remove('hidden');
   details.innerHTML = `
