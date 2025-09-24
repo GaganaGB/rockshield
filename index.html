@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Rockfall Prediction & Alert</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="app-header">
+        <h1> RockShield</h1>
+        <p>Upload an open-pit mine image and analyze.</p>
+    </header>
+
+    <main class="container">
+        <section class="panel upload-panel">
+            <h2>1) Upload Image</h2>
+            <div class="uploader">
+                <input type="file" id="imageInput" accept="image/*">
+                <div id="preview" class="preview hidden">
+                    <img id="previewImg" alt="Preview" />
+                </div>
+            </div>
+            <button id="analyzeBtn" disabled>Analyze Image</button>
+            <button id="forceBtn" class="secondary hidden">Analyze Anyway</button>
+        </section>
+
+        <section class="panel result-panel">
+            <h2>2) Result</h2>
+            <div id="status" class="status">Waiting for image...</div>
+            <div id="alertBanner" class="alert hidden" role="alert"></div>
+            <div id="details" class="details hidden"></div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <span>For Initial stage .</span>
+    </footer>
+
+    <script>
+      // Allow configuring backend URL via query ?api=URL
+      (function() {
+        try {
+          const params = new URLSearchParams(location.search);
+          const raw = params.get('api');
+          if (!raw) return;
+          // Accept only valid http/https URLs; ignore malformed values
+          const url = new URL(raw);
+          if (url.protocol === 'http:' || url.protocol === 'https:') {
+            // Use origin plus optional pathname when not root
+            window.BACKEND_URL = url.pathname && url.pathname !== '/' ? `${url.origin}${url.pathname.replace(/\/$/, '')}` : url.origin;
+          }
+        } catch (_) {
+          // Ignore invalid api param
+          console.warn('Ignored invalid ?api parameter');
+        }
+      })();
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
+
