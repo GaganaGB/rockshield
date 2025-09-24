@@ -212,7 +212,7 @@ async function renderResult(result) {
   alertBanner.classList.remove('hidden');
   if (danger) {
     alertBanner.className = 'alert danger';
-    alertBanner.textContent = `ALERT: Potential rockfall detected! Move ${direction.toUpperCase()}.`;
+    alertBanner.textContent = `ALERT: Rockfall detected! Move ${direction.toUpperCase()}.`;
   } else {
     alertBanner.className = 'alert safe';
     alertBanner.textContent = 'No immediate rockfall risk detected.';
