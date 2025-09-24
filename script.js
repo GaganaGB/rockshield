@@ -41,6 +41,8 @@ const statusEl = document.getElementById('status');
 const alertBanner = document.getElementById('alertBanner');
 const details = document.getElementById('details');
 const forceBtn = document.getElementById('forceBtn');
+const resultChartEl = document.getElementById('resultChart');
+let resultChart = null;
 const apiInput = null;
 const saveApiBtn = null;
 
@@ -210,6 +212,38 @@ function renderResult(result) {
   }
 
   statusEl.textContent = 'Analysis complete.';
+
+  try {
+    if (resultChartEl && window.Chart) {
+      if (!resultChart) {
+        resultChart = new Chart(resultChartEl, {
+          type: 'line',
+          data: { labels: [], datasets: [ { label: 'Risk (%)', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.2)', tension: 0.2 } ] },
+          options: { responsive: true, plugins: { legend: { display: true } }, scales: { y: { beginAtZero: true, suggestedMax: 100 } } }
+        });
+      }
+      const ts = new Date().toLocaleTimeString();
+      resultChart.data.labels.push(ts);
+      const riskPercent = danger ? 100 : 0; // simple binary risk for chart
+      resultChart.data.datasets[0].data.push(riskPercent);
+      // keep last 20 points
+      if (resultChart.data.labels.length > 20) {
+        resultChart.data.labels.shift();
+        resultChart.data.datasets[0].data.shift();
+      }
+      resultChart.update();
+    }
+  } catch (_) { /* noop */ }
+
+  // If danger, attempt to notify control room via backend (if configured)
+  if (danger && apiAvailable) {
+    try {
+      const form = new FormData();
+      form.append('subject', 'RockShield ALERT');
+      form.append('message', `Danger detected. Category=${class_name || 'n/a'}, Direction=${direction || 'n/a'}, Slope=${slope_angle || 'n/a'}°.`);
+      await fetchWithTimeout(`${apiBase}/notify`, { method: 'POST', body: form }, 10000);
+    } catch (_) { /* ignore if backend not configured */ }
+  }
 }
 
 function showInvalidImageError() {
